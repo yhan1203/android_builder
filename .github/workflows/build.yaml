@@ -55,6 +55,12 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDefaultRelease --stacktrace --warning-mode all --info
 
+      - name: Read release apk output metadata
+        id: apk-meta-release
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: app/build/outputs/apk/default/release/output-metadata.json
+
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
