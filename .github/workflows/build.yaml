@@ -20,9 +20,23 @@ jobs:
         name: Get project name
         run: echo "PROJECT=$(cat project-to-build)" >> $GITHUB_ENV
 
-      - name: Clone project
-        run: git clone --depth=1 ${{ env.PROJECT }} project
+      - id: check-branch
+        name: Check if branch is specified
+        run: |
+          if [[ "$PROJECT" == *"/tree/"* ]]; then
+            echo "BRANCH=$(echo $PROJECT | sed 's|.*/tree/||')" >> $GITHUB_ENV
+            echo "PROJECT=$(echo $PROJECT | sed 's|/tree/.*||')" >> $GITHUB_ENV
+          else
+            echo "BRANCH=main" >> $GITHUB_ENV
+          fi
 
+      - name: Clone project
+        run: |
+          if [ "$BRANCH" == "main" ]; then
+            git clone --depth=1 ${{ env.PROJECT }} project
+          else
+            git clone --depth=1 --branch ${{ env.BRANCH }} ${{ env.PROJECT }} project
+          
       - name: Set up Gradle cache
         uses: actions/cache@v3
         with:
