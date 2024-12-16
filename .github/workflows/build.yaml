@@ -36,7 +36,8 @@ jobs:
             git clone --depth=1 ${{ env.PROJECT }} project
           else
             git clone --depth=1 --branch ${{ env.BRANCH }} ${{ env.PROJECT }} project
-          
+          fi
+
       - name: Set up Gradle cache
         uses: actions/cache@v3
         with:
