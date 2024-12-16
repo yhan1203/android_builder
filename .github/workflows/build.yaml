@@ -28,7 +28,6 @@ jobs:
             echo "PROJECT=$(echo $PROJECT | sed 's|/tree/.*||')" >> $GITHUB_ENV
           else
             echo "BRANCH=main" >> $GITHUB_ENV
-          fi
 
       - name: Clone project
         run: |
@@ -55,14 +54,20 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDefaultRelease --stacktrace --warning-mode all --info
 
+      - name: List build outputs
+        run: ls -R app/build/outputs
+        working-directory: ./project
+
       - name: Read release apk output metadata
         id: apk-meta-release
         uses: juliangruber/read-file-action@v1
         with:
           path: app/build/outputs/apk/default/release/output-metadata.json
+        working-directory: ./project
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: my-build-apk
           path: ./**/*.apk
+        working-directory: ./project
